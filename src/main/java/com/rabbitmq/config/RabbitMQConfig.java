@@ -1,5 +1,8 @@
 package com.rabbitmq.config;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -10,28 +13,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RabbitMQConfig {
 
-    @Value("${queue_name}")
-    private String QUEUE;
+    @Value("${order-queue}")
+    private String orderQueue;
 
-    private String EXCHANGE;
+    @Value("${order-exchange}")
+    private String orderExchange;
 
-    private String ROUTING_KEY;
+    @Value("${order-routing-key}")
+    private String orderRoutingKey;
 
     @Bean
     public Queue queue(){
-        return new Queue(QUEUE);
+        return new Queue(orderQueue);
     }
 
     @Bean
     public TopicExchange exchange(){
-        return new TopicExchange(EXCHANGE);
+        return new TopicExchange(orderExchange);
     }
 
     @Bean
     public Binding binding(Queue queue , TopicExchange exchange){
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+        return BindingBuilder.bind(queue).to(exchange).with(orderRoutingKey);
     }
 
     @Bean
@@ -41,8 +49,8 @@ public class RabbitMQConfig {
 
     @Bean
     public AmqpTemplate template(ConnectionFactory connectionFactory){
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.convertAndSend(converter());
+       final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter());
         return  rabbitTemplate;
     }
 }
