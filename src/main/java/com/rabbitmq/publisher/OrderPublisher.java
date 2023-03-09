@@ -1,16 +1,12 @@
-package com.rabbitmq.controller;
+package com.rabbitmq.publisher;
 
-import com.rabbitmq.config.RabbitMQConfig;
 import com.rabbitmq.dto.Order;
 import com.rabbitmq.dto.OrderStatus;
-import com.rabbitmq.dto.User;
-import com.rabbitmq.publisher.UserProducer;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -29,8 +25,9 @@ public class OrderPublisher {
 
     @PostMapping("/publish")
     public String processOrder(@RequestBody Order order){
+        order.setId(UUID.randomUUID());
         OrderStatus orderStatus = new OrderStatus(order, "Completed", "Order successfully done!!!");
-        rabbitTemplate.convertAndSend(orderExchange, orderRoutingKey, orderStatus);
+        rabbitTemplate.convertAndSend(orderExchange, orderRoutingKey, orderStatus.toString());
         return "Ok";
     }
 }
