@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserConsumer {
 
-//    @RabbitListener(queues = {"${order-queue}"})
-//    public void receiveMessageOrder(String message){
-//        log.info(String.format("Received message -> %s", message));
-//    }
+    @RabbitListener(queues = {"${order-queue}"})
+    public void receiveMessageOrder(String message){
+        log.info(String.format("Received message -> %s", message));
+    }
 
 }
