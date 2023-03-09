@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Value("${order-queue}")
-    private String orderQueue;
+    private  String orderQueue;
 
     @Value("${order-exchange}")
     private String orderExchange;
@@ -39,11 +39,12 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(queue).to(exchange).with(orderRoutingKey);
     }
 
-
+    @Bean
     public MessageConverter converter(){
         return  new Jackson2JsonMessageConverter();
     }
 
+    @Bean
     public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory){
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(converter());
